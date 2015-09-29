@@ -1,0 +1,6 @@
+package go
+
+main(){
+
+
+}
