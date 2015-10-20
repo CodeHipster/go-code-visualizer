@@ -127,6 +127,9 @@ func main(){
     fmt.Println(dir)
     
     is := importScanner{}
+    fs := functionScanner{}
+    ts := typeScanner{}
+    vs := variableScanner{}
     
     scanFile := func(path string){
         //Read file contents.
@@ -146,12 +149,31 @@ func main(){
             if(is.match(line)){
                 is.scan(scanner)
             }        
+            if(fs.match(line)){
+                fs.scan(scanner)
+            }
+            if(ts.match(line)){
+                ts.scan(scanner)
+            }
+            if(vs.match(line)){
+                vs.scan(scanner)
+            }
         }
         
         for _,element := range is.items {        
             fmt.Printf("%s\n",element)
         }
     
+        for _,element := range fs.items {        
+            fmt.Printf("%s\n",element)
+        }
+        for _,element := range ts.items {        
+            fmt.Printf("%s\n",element)
+        }
+        for _,element := range vs.items {        
+            fmt.Printf("%s\n",element)
+        }
+        
         if err := scanner.Err(); err != nil {
             fmt.Printf("Invalid input: %s", err)
         }
