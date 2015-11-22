@@ -12,9 +12,14 @@ import(
 	"strings"
     "io/ioutil"
 	)
+	
+func check(e error) {
+    if e != nil {
+        panic(e)
+    }
+}
 
 func ParseFile(path string) (parsedFile ParsedGoCode){	
-	//parsedFile = ParsedGoCode{}
 	    
     //convert file to byte array.
     fileInBytes, err := ioutil.ReadFile(path)
@@ -50,22 +55,36 @@ func ParseFile(path string) (parsedFile ParsedGoCode){
 							for _,spec := range genDecl.Specs{								
 								importSpec := spec.(*ast.ImportSpec)
 								importString , _ := strconv.Unquote(importSpec.Path.Value)
-								parsedFile.addImport(importString)
+								(&parsedFile).addImport(importString)
 							}
 							break;
 						case token.TYPE:
+						//https://golang.org/ref/spec#Types
 							for _,spec := range genDecl.Specs{								
 								typeSpec := spec.(*ast.TypeSpec)
 								switch typeType := typeSpec.Type.(type){
 									case *ast.Ident:
 										ident := (*ast.Ident)(typeType)
-										parsedFile.addType("type " + typeSpec.Name.Name + " " + ident.Name)
-										break
+										(&parsedFile).addType("type " + typeSpec.Name.Name + " " + ident.Name)
 									case *ast.InterfaceType:
-										parsedFile.addType("type " + typeSpec.Name.Name + " interface")										
+										(&parsedFile).addType("type " + typeSpec.Name.Name + " interface")
+									case *ast.StructType:														
+										(&parsedFile).addType("type " + typeSpec.Name.Name + " struct")		
+									case *ast.ArrayType:			
+									//todo add array length?											
+										(&parsedFile).addType("type []" + typeSpec.Name.Name)	
+									case *ast.StarExpr:														
+										(&parsedFile).addType("type *" + typeSpec.Name.Name)	
+									case *ast.FuncType:									
+									//TODO: add signature?					
+										(&parsedFile).addType("type " + typeSpec.Name.Name + " func")	
+									case *ast.MapType:	
+									//todo: add key and element type?													
+										(&parsedFile).addType("type []" + typeSpec.Name.Name)	
+									case *ast.ChanType:
+									//todo: add channel direction?														
+										(&parsedFile).addType("type " + typeSpec.Name.Name + " chan")					
 									default:
-										//TODO: implement all other types.
-										//ArrayType | StructType | PointerType | FunctionType | InterfaceType | SliceType | MapType | ChannelType
 										fmt.Printf("unknown type: %s\n",reflect.TypeOf(typeSpec.Type))								
 								}								
 							}
@@ -83,7 +102,7 @@ func ParseFile(path string) (parsedFile ParsedGoCode){
 										fmt.Printf("unknown varType: %s\n",reflect.TypeOf(varSpec.Type))
 								}
 								for _,name := range varSpec.Names{
-									parsedFile.addVar("var " + name.Name + varType)
+									(&parsedFile).addVar("var " + name.Name + varType)
 								}
 							}
 							break;											
@@ -100,7 +119,7 @@ func ParseFile(path string) (parsedFile ParsedGoCode){
 										fmt.Printf("unknown varType: %s\n",reflect.TypeOf(constSpec.Type))
 								}
 								for _,name := range constSpec.Names{
-									parsedFile.addVar("const " + name.Name + constType)
+									(&parsedFile).addVar("const " + name.Name + constType)
 								}
 							}
 							break;
@@ -109,7 +128,7 @@ func ParseFile(path string) (parsedFile ParsedGoCode){
 					funcDecl := (*ast.FuncDecl)(declType)
 					
 					functionString := string(fileInBytes[funcDecl.Pos()-1:funcDecl.Body.Lbrace-1])
-					parsedFile.addFunc(functionString)
+					(&parsedFile).addFunc(functionString)
 					
 				default:
 					fmt.Println("unknown declaration")

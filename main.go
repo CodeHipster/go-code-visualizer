@@ -33,25 +33,23 @@ func main() {
 		if info.IsDir() && info.Name() == ".git" {
 			return filepath.SkipDir
 		}
+		
 		//Check extension
 		extension := filepath.Ext(path)
-		if strings.ToLower(extension) != ".go" {
-			return nil
+		if strings.ToLower(extension) == ".go" {
+			parsedFile := parser.ParseFile(path)
+			fmt.Println(parsedFile.ToString())
 		}
-
-		parsedFile := parser.ParseGoCode(path)
-
-		fmt.Printf("%+v\n", parsedFile)
 
 		return nil
 	}
+	
 	filepath.Walk(dir, walkFunc)
 
 	//Create/overwrite a file
 	f, err := os.Create(dir + "/dot-visual.cv")
 	check(err)
 
-	defer f.Close()
-
 	f.Sync()
+	f.Close()
 }
