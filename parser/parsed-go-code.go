@@ -15,16 +15,32 @@ func (p *ParsedGoCode) addImport(imp string){
 	p.Imports = append(p.Imports, imp)
 } 
 
+func (p *ParsedGoCode) addImports(imp []string){
+	p.Imports = append(p.Imports, imp...)
+} 
+
 func (p *ParsedGoCode) addType(typ string){
 	p.Types = append(p.Types, typ)
+} 
+
+func (p *ParsedGoCode) addTypes(typ []string){
+	p.Types = append(p.Types, typ...)
 } 
 
 func (p *ParsedGoCode) addVar(variable string){
 	p.Variables = append(p.Variables, variable)
 } 
 
+func (p *ParsedGoCode) addVars(variable []string){
+	p.Variables = append(p.Variables, variable...)
+} 
+
 func (p *ParsedGoCode) addFunc(function string){
 	p.Functions = append(p.Functions, function)
+} 
+
+func (p *ParsedGoCode) addFuncs(function []string){
+	p.Functions = append(p.Functions, function...)
 } 
 
 func (p ParsedGoCode) ToString() (str string){
