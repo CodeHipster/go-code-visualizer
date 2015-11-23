@@ -1,7 +1,7 @@
 package main
 
 import (
-	"fmt"
+	"bufio"
 	"github.com/thijsoostdam/go-code-visualizer/parser"
 	"log"
 	"os"
@@ -27,29 +27,33 @@ func main() {
 		log.Fatal(err)
 	}
 
+
+	//Create/overwrite a file
+	cvFile, err := os.Create(dir + "/dot-visual.cv")
+	check(err)
+	defer cvFile.Close()
+
+	writer := bufio.NewWriter(cvFile)	
+
 	//walk the filesystem.
 	walkFunc := func(path string, info os.FileInfo, err error) error {
-		//Check if it is .git directory (improve to all hidden files and folders.)
+		//Skip .git directory.
 		if info.IsDir() && info.Name() == ".git" {
 			return filepath.SkipDir
 		}
 		
-		//Check extension
+		//Parse if file is .go file.
 		extension := filepath.Ext(path)
 		if strings.ToLower(extension) == ".go" {
 			parsedFile := parser.ParseFile(path)
-			fmt.Println(parsedFile.ToString())
+			writer.WriteString(parsedFile.ToString())
+			writer.Flush()
 		}
 
 		return nil
 	}
 	
 	filepath.Walk(dir, walkFunc)
-
-	//Create/overwrite a file
-	f, err := os.Create(dir + "/dot-visual.cv")
-	check(err)
-
-	f.Sync()
-	f.Close()
+	
+	cvFile.Sync()
 }
