@@ -19,11 +19,11 @@ func (p parsedCode) PackageName() string{
 	return p.packageName
 }
 	
-func (p parsedCode) addImport(imp string){
+func (p *parsedCode) addImport(imp string){
 	p.imports = append(p.imports, imp)
 } 
 
-func (p parsedCode) addImports(imp []string){
+func (p *parsedCode) addImports(imp []string){
 	p.imports = append(p.imports, imp...)
 } 
 
@@ -31,11 +31,11 @@ func (p parsedCode) Imports() []string{
 	return p.imports
 }
 
-func (p parsedCode) addType(typ string){
+func (p *parsedCode) addType(typ string){
 	p.types = append(p.types, typ)
 } 
 
-func (p parsedCode) addTypes(typ []string){
+func (p *parsedCode) addTypes(typ []string){
 	p.types = append(p.types, typ...)
 } 
 
@@ -43,11 +43,11 @@ func (p parsedCode) Types() []string{
 	return p.types
 } 
 
-func (p parsedCode) addVar(variable string){
+func (p *parsedCode) addVar(variable string){
 	p.variables = append(p.variables, variable)
 } 
 
-func (p parsedCode) addVars(variable []string){
+func (p *parsedCode) addVars(variable []string){
 	p.variables = append(p.variables, variable...)
 } 
 
@@ -55,11 +55,11 @@ func (p parsedCode) Variables() []string{
 	return p.variables
 } 
 
-func (p parsedCode) addFunc(function string){
+func (p *parsedCode) addFunc(function string){
 	p.functions = append(p.functions, function)
 } 
 
-func (p parsedCode) addFuncs(function []string){
+func (p *parsedCode) addFuncs(function []string){
 	p.functions = append(p.functions, function...)
 } 
 

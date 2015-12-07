@@ -8,7 +8,6 @@ import (
 	"os"
 	"path/filepath"
 	"strings"
-	"fmt"
 )
 
 func check(e error) {
@@ -55,6 +54,5 @@ func main() {
 	writer := bufio.NewWriter(cvFile)	
 	
 	writer.WriteString(dotGraph)
-	
-	cvFile.Sync()
+	writer.Flush()
 }

@@ -51,6 +51,7 @@ func parseImportDeclarations(importSpecs []ast.Spec) []string{
 		importString , _ := strconv.Unquote(importSpec.Path.Value)
 		imports[i] = importString
 	}
+	
 	return imports			
 }
 
@@ -60,10 +61,11 @@ func parseTypeDeclarations(typeSpecs []ast.Spec) []string{
 	types := make([]string,0,len(typeSpecs))
 	
 	for _,spec := range typeSpecs{								
-		typeSpec := spec.(*ast.TypeSpec)
-		//We only want to see exported properties (could be configurable later.)		
-		if(ast.IsExported(typeSpec.Name.Name) == false){
-			fmt.Printf("type not exported: %s\n",typeSpec.Name.Name)
+		typeSpec := spec.(*ast.TypeSpec)		
+		if(ast.IsExported(typeSpec.Name.Name)){
+			fmt.Printf("Type exported: %s\n",typeSpec.Name.Name)
+		}else{			
+			fmt.Printf("Type not exported: %s\n",typeSpec.Name.Name)
 			continue
 		}
 		switch typeType := typeSpec.Type.(type){
@@ -111,11 +113,12 @@ func parseVariableDeclarations(variableSpecs []ast.Spec, prefix string) []string
 				fmt.Printf("unknown varType: %s\n",reflect.TypeOf(varSpec.Type))
 		}
 		for _,name := range varSpec.Names{
-			if(ast.IsExported(name.Name) == false){
-				fmt.Printf("var not exported: %s\n",name.Name)
-				continue
+			if(ast.IsExported(name.Name)){
+				fmt.Printf("Variable exported: %s\n",name.Name)
+				variables = append(variables, prefix + name.Name + varType)
+			}else{
+				fmt.Printf("Variable not exported: %s\n",name.Name)
 			}
-			variables = append(variables, prefix + name.Name + varType)
 		}
 	}	
 	return variables
@@ -123,7 +126,10 @@ func parseVariableDeclarations(variableSpecs []ast.Spec, prefix string) []string
 
 func parseFunction(funcDecl *ast.FuncDecl, fileInBytes []byte) (string, bool){
 	if(ast.IsExported(funcDecl.Name.Name)){
+		fmt.Printf("Function exported: %s\n", funcDecl.Name.Name)
 		return string(fileInBytes[funcDecl.Pos()-1:funcDecl.Body.Lbrace-1]), true						
+	}else{		
+		fmt.Printf("Function not exported: %s\n", funcDecl.Name.Name)
 	}
 	return "", false
 }
