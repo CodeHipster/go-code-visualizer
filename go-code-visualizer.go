@@ -3,15 +3,13 @@ package main
 import (
 	"bufio"
 	"github.com/thijsoostdam/go-code-visualizer/parser"
+	"github.com/thijsoostdam/go-code-visualizer/formatter"
 	"log"
 	"os"
 	"path/filepath"
 	"strings"
+	"fmt"
 )
-
-//todo: skip hidden directories.
-//http://grokbase.com/t/gg/golang-nuts/144va1n8w5/go-nuts-how-do-check-if-file-or-directory-is-hidden-under-windows
-//Check if syscall hidden attribute works for windows and unix systems.
 
 func check(e error) {
 	if e != nil {
@@ -27,13 +25,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-
-	//Create/overwrite a file
-	cvFile, err := os.Create(dir + "/dot-visual.cv")
-	check(err)
-	defer cvFile.Close()
-
-	writer := bufio.NewWriter(cvFile)	
+	parsedGoCodeFiles := make([]formatter.ParsedCode,0)
 
 	//walk the filesystem.
 	walkFunc := func(path string, info os.FileInfo, err error) error {
@@ -45,15 +37,24 @@ func main() {
 		//Parse if file is .go file.
 		extension := filepath.Ext(path)
 		if strings.ToLower(extension) == ".go" {
-			parsedFile := parser.ParseFile(path)
-			writer.WriteString(parsedFile.ToString())
-			writer.Flush()
+			parsedGoCode := parser.ParseFile(path)
+			parsedGoCodeFiles = append(parsedGoCodeFiles, parsedGoCode)
 		}
 
 		return nil
 	}
 	
 	filepath.Walk(dir, walkFunc)
+	
+	dotGraph := formatter.GenerateDotGraph(parsedGoCodeFiles)
+	//Create/overwrite a file
+	cvFile, err := os.Create(dir + "/dot-visual.gv")
+	check(err)
+	defer cvFile.Close()
+	
+	writer := bufio.NewWriter(cvFile)	
+	
+	writer.WriteString(dotGraph)
 	
 	cvFile.Sync()
 }

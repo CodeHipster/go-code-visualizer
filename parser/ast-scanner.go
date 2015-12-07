@@ -56,33 +56,38 @@ func parseImportDeclarations(importSpecs []ast.Spec) []string{
 
 func parseTypeDeclarations(typeSpecs []ast.Spec) []string{
 	//https://golang.org/ref/spec#Types
+	//make slice with 0 length but with a capacity to hold all types.
+	types := make([]string,0,len(typeSpecs))
 	
-	types := make([]string,len(typeSpecs))
-	
-	for i,spec := range typeSpecs{								
+	for _,spec := range typeSpecs{								
 		typeSpec := spec.(*ast.TypeSpec)
+		//We only want to see exported properties (could be configurable later.)		
+		if(ast.IsExported(typeSpec.Name.Name) == false){
+			fmt.Printf("type not exported: %s\n",typeSpec.Name.Name)
+			continue
+		}
 		switch typeType := typeSpec.Type.(type){
 			case *ast.Ident:
 				ident := (*ast.Ident)(typeType)
-				types[i] = "type " + typeSpec.Name.Name + " " + ident.Name
+				types = append(types,"type " + typeSpec.Name.Name + " " + ident.Name)
 			case *ast.InterfaceType:
-				types[i] = "type " + typeSpec.Name.Name + " interface"
+				types = append(types, "type " + typeSpec.Name.Name + " interface")
 			case *ast.StructType:														
-				types[i] = "type " + typeSpec.Name.Name + " struct"		
+				types = append(types, "type " + typeSpec.Name.Name + " struct")		
 			case *ast.ArrayType:			
 			//todo add array length?											
-				types[i] = "type []" + typeSpec.Name.Name	
+				types = append(types, "type []" + typeSpec.Name.Name)	
 			case *ast.StarExpr:														
-				types[i] = "type *" + typeSpec.Name.Name	
+				types = append(types, "type *" + typeSpec.Name.Name)	
 			case *ast.FuncType:									
 			//TODO: add signature?					
-				types[i] = "type " + typeSpec.Name.Name + " func"	
+				types = append(types, "type " + typeSpec.Name.Name + " func")	
 			case *ast.MapType:	
 			//todo: add key and element type?													
-				types[i] = "type []" + typeSpec.Name.Name	
+				types = append(types, "type []" + typeSpec.Name.Name)	
 			case *ast.ChanType:
 			//todo: add channel direction?														
-				types[i] = "type " + typeSpec.Name.Name + " chan"				
+				types = append(types, "type " + typeSpec.Name.Name + " chan")				
 			default:
 				fmt.Printf("unknown type: %s\n",reflect.TypeOf(typeSpec.Type))								
 		}								
@@ -90,10 +95,11 @@ func parseTypeDeclarations(typeSpecs []ast.Spec) []string{
 	return types
 }
 
-func parseVariableDeclarations(variableSpecs []ast.Spec) []string{
-	variables := make([]string,len(variableSpecs))
+func parseVariableDeclarations(variableSpecs []ast.Spec, prefix string) []string{
+	//make slice with 0 length but with a capacity to hold all variables.
+	variables := make([]string,0,len(variableSpecs))
 	
-	for i,spec := range variableSpecs{								
+	for _,spec := range variableSpecs{								
 		varSpec := spec.(*ast.ValueSpec)
 		var varType string
 		switch typeVar := varSpec.Type.(type){ //check for nil?
@@ -105,76 +111,62 @@ func parseVariableDeclarations(variableSpecs []ast.Spec) []string{
 				fmt.Printf("unknown varType: %s\n",reflect.TypeOf(varSpec.Type))
 		}
 		for _,name := range varSpec.Names{
-			variables[i] = "var " + name.Name + varType
+			if(ast.IsExported(name.Name) == false){
+				fmt.Printf("var not exported: %s\n",name.Name)
+				continue
+			}
+			variables = append(variables, prefix + name.Name + varType)
 		}
 	}	
 	return variables
 }
 
-
-func parseConstDeclarations(ConstSpecs []ast.Spec) []string{	
-	consts := make([]string,len(ConstSpecs))
-	
-	for i,spec := range ConstSpecs{								
-		constSpec := spec.(*ast.ValueSpec)
-		var constType string
-		switch typeVar := constSpec.Type.(type){
-			case *ast.Ident:									
-				ident := (*ast.Ident)(typeVar)
-				constType = ident.Name
-			break;
-			default:
-				fmt.Printf("unknown varType: %s\n",reflect.TypeOf(constSpec.Type))
-		}
-		for _,name := range constSpec.Names{
-			consts[i] = "const " + name.Name + constType
-		}
+func parseFunction(funcDecl *ast.FuncDecl, fileInBytes []byte) (string, bool){
+	if(ast.IsExported(funcDecl.Name.Name)){
+		return string(fileInBytes[funcDecl.Pos()-1:funcDecl.Body.Lbrace-1]), true						
 	}
-	return consts
+	return "", false
 }
 
-func parseGenericDeclaration(genDecl *ast.GenDecl, pgc *ParsedGoCode){
-	switch(genDecl.Tok){
-		case token.IMPORT:
-			pgc.addImports(parseImportDeclarations(genDecl.Specs))
-		case token.TYPE:
-			pgc.addTypes(parseTypeDeclarations(genDecl.Specs))	
-		case token.VAR:	
-			pgc.addVars(parseVariableDeclarations(genDecl.Specs))											
-		case token.CONST:
-			pgc.addVars(parseConstDeclarations(genDecl.Specs))
-	}				
-}
-
-func ParseFile(path string) (parsedFile ParsedGoCode){	
+func ParseFile(path string) (parsedGoCode parsedCode){	
 	    
     //convert file to byte array.
     fileInBytes, err := ioutil.ReadFile(path)
 	check(err) 
 	
 	if(validSyntax(fileInBytes) == false){
-		//log file is invalid
 		fmt.Printf("File %s has invalid go syntax", path)
 	}
 	
 	syntaxTree := goParseFile(path)
 		
-    parsedFile.PackagePath = distilPackagePath(path)
-	parsedFile.PackageName = syntaxTree.Name.Name
+    parsedGoCode.packagePath = distilPackagePath(path)
+	parsedGoCode.packageName = syntaxTree.Name.Name
 	
 	for _, declaration := range syntaxTree.Decls {
 		switch declType := declaration.(type) {
-				case *ast.GenDecl:			
-					genDecl := (*ast.GenDecl)(declType)
-					parseGenericDeclaration(genDecl, &parsedFile)
-				case *ast.FuncDecl:					
-					funcDecl := (*ast.FuncDecl)(declType)				
-					functionString := string(fileInBytes[funcDecl.Pos()-1:funcDecl.Body.Lbrace-1])
-					(&parsedFile).addFunc(functionString)			
-				default:
-					fmt.Println("unknown declaration")
+			case *ast.GenDecl:
+				genericDeclaration := (*ast.GenDecl)(declType)
+				switch(genericDeclaration.Tok){
+					case token.IMPORT:
+						parsedGoCode.addImports(parseImportDeclarations(genericDeclaration.Specs))
+					case token.TYPE:
+						parsedGoCode.addTypes(parseTypeDeclarations(genericDeclaration.Specs))	
+					case token.VAR:	
+						parsedGoCode.addVars(parseVariableDeclarations(genericDeclaration.Specs, "var"))											
+					case token.CONST:
+						parsedGoCode.addVars(parseVariableDeclarations(genericDeclaration.Specs, "const"))
+					default:
+						fmt.Println("unknown generic declaration")
+				}
+			case *ast.FuncDecl:				
+				funcDecl := (*ast.FuncDecl)(declType)	
+				funcString, success := parseFunction(funcDecl, fileInBytes)
+				if(success) {parsedGoCode.addFunc(funcString)}								
+			default:
+				fmt.Println("unknown declaration")
 		}
 	}
 	
-	return parsedFile
+	return parsedGoCode
 }
