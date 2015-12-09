@@ -6,9 +6,9 @@ digraph GoProject {
 		shape = "record"
 	]
 
-	"formatter" [
+	"block" [
 		label=<
-		{	<B><FONT POINT-SIZE="12">formatter : github.com/thijsoostdam/go-code-visualizer/formatter</FONT></B> |
+		{	<B><FONT POINT-SIZE="12">block : github.com/thijsoostdam/blockcommonslicestream/block</FONT></B> |
 			{
 				{
 					<B>FileName</B> |
@@ -32,9 +32,9 @@ digraph GoProject {
 			}
 		}>
 	]
-	"graph" [
+	"generator" [
 		label=<
-		{	<B><FONT POINT-SIZE="12">graph : github.com/thijsoostdam/go-code-visualizer/formatter/graph</FONT></B> |
+		{	<B><FONT POINT-SIZE="12">generator : github.com/thijsoostdam/blockcommonslicestream/generator</FONT></B> |
 			{
 				{
 					<B>FileName</B> |
@@ -60,7 +60,7 @@ digraph GoProject {
 	]
 	"main" [
 		label=<
-		{	<B><FONT POINT-SIZE="12">main : github.com/thijsoostdam/go-code-visualizer</FONT></B> |
+		{	<B><FONT POINT-SIZE="12">main : github.com/thijsoostdam/blockcommonslicestream</FONT></B> |
 			{
 				{
 					<B>FileName</B> |
@@ -84,9 +84,9 @@ digraph GoProject {
 			}
 		}>
 	]
-	"parser" [
+	"visualizer" [
 		label=<
-		{	<B><FONT POINT-SIZE="12">parser : github.com/thijsoostdam/go-code-visualizer/parser</FONT></B> |
+		{	<B><FONT POINT-SIZE="12">visualizer : github.com/thijsoostdam/blockcommonslicestream/visualizer</FONT></B> |
 			{
 				{
 					<B>FileName</B> |
@@ -111,8 +111,9 @@ digraph GoProject {
 		}>
 	]
 
-	"formatter" -> "graph"
-	"main" -> "parser"
-	"main" -> "formatter"
+	"generator" -> "block"
+	"main" -> "visualizer"
+	"main" -> "generator"
+	"visualizer" -> "block"
 
 }

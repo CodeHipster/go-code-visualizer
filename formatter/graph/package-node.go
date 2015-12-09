@@ -12,9 +12,9 @@ type PackageNode struct{
 
 type PackageNodeFile struct {
 	fileName string
+	functions []string
 	types []string
 	variables []string
-	functions []string
 }
 
 //TODO: implement all the filenames, types, vars, funcs
@@ -29,15 +29,11 @@ func (pn PackageNode) ToGraphString() string {
 				}
 				|
 				{
-					<B>Types</B> |					
-				}
-				|
-				{
-					<B>Interfaces</B> |					
-				}
-				|
-				{
 					<B>Functions</B>|
+				}
+				|
+				{
+					<B>Types</B> |					
 				}
 				|
 				{
