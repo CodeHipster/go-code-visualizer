@@ -4,7 +4,7 @@ go-code-visualizer
 
 This project aims to visualize the go code inside a location on your file system.
 It will show the dependencies between packages and content of those packages
-- Types
+- Public Types
 - Public Variables
 - Public Functions
 
