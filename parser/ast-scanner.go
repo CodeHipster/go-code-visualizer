@@ -49,7 +49,7 @@ func parseImportDeclarations(importSpecs []ast.Spec) []string{
 	for i,spec := range importSpecs{										
 		importSpec := spec.(*ast.ImportSpec)
 		importString , _ := strconv.Unquote(importSpec.Path.Value)
-		imports[i] = importString
+		imports[i] = strings.ToLower(importString)
 	}
 	
 	return imports			
@@ -146,7 +146,7 @@ func ParseFile(path string) (parsedGoCode parsedCode){
 	
 	syntaxTree := goParseFile(path)
 		
-    parsedGoCode.packagePath = distilPackagePath(path)
+    parsedGoCode.packagePath = strings.ToLower(distilPackagePath(path))
 	parsedGoCode.packageName = syntaxTree.Name.Name
 	
 	for _, declaration := range syntaxTree.Decls {

@@ -1,70 +1,118 @@
-package path: github.com/ThijsOostdam/go-code-visualizer/formatter
-package name: formatter
-imports:
-types:
-variables:
-functions:
-func GenerateDotGraph(goCode []ParsedCode) string
+digraph GoProject {
+	rankdir=TB
+	
+	node [
+		fontsize = 12
+		shape = "record"
+	]
 
-package path: github.com/ThijsOostdam/go-code-visualizer/formatter
-package name: formatter
-imports:
-types:
-type ParsedCode interface
-variables:
-functions:
+	"formatter" [
+		label=<
+		{	<B><FONT POINT-SIZE="12">formatter : github.com/thijsoostdam/go-code-visualizer/formatter</FONT></B> |
+			{
+				{
+					<B>FileName</B> |
+				}
+				|
+				{
+					<B>Types</B> |					
+				}
+				|
+				{
+					<B>Interfaces</B> |					
+				}
+				|
+				{
+					<B>Functions</B>|
+				}
+				|
+				{
+					<B>Variables</B>|
+				}
+			}
+		}>
+	]
+	"graph" [
+		label=<
+		{	<B><FONT POINT-SIZE="12">graph : github.com/thijsoostdam/go-code-visualizer/formatter/graph</FONT></B> |
+			{
+				{
+					<B>FileName</B> |
+				}
+				|
+				{
+					<B>Types</B> |					
+				}
+				|
+				{
+					<B>Interfaces</B> |					
+				}
+				|
+				{
+					<B>Functions</B>|
+				}
+				|
+				{
+					<B>Variables</B>|
+				}
+			}
+		}>
+	]
+	"main" [
+		label=<
+		{	<B><FONT POINT-SIZE="12">main : github.com/thijsoostdam/go-code-visualizer</FONT></B> |
+			{
+				{
+					<B>FileName</B> |
+				}
+				|
+				{
+					<B>Types</B> |					
+				}
+				|
+				{
+					<B>Interfaces</B> |					
+				}
+				|
+				{
+					<B>Functions</B>|
+				}
+				|
+				{
+					<B>Variables</B>|
+				}
+			}
+		}>
+	]
+	"parser" [
+		label=<
+		{	<B><FONT POINT-SIZE="12">parser : github.com/thijsoostdam/go-code-visualizer/parser</FONT></B> |
+			{
+				{
+					<B>FileName</B> |
+				}
+				|
+				{
+					<B>Types</B> |					
+				}
+				|
+				{
+					<B>Interfaces</B> |					
+				}
+				|
+				{
+					<B>Functions</B>|
+				}
+				|
+				{
+					<B>Variables</B>|
+				}
+			}
+		}>
+	]
 
-package path: github.com/ThijsOostdam/go-code-visualizer
-package name: main
-imports:
-bufio
-github.com/thijsoostdam/go-code-visualizer/parser
-github.com/thijsoostdam/go-code-visualizer/formatter
-log
-os
-path/filepath
-strings
-types:
-variables:
-functions:
+	"formatter" -> "graph"
+	"main" -> "parser"
+	"main" -> "formatter"
 
-package path: github.com/ThijsOostdam/go-code-visualizer/parser
-package name: parser
-imports:
-go/parser
-go/token
-go/format
-fmt
-reflect
-go/ast
-path/filepath
-strconv
-strings
-io/ioutil
-types:
-variables:
-functions:
-func ParseFile(path string) (parsedGoCode parsedCode)
-
-package path: github.com/ThijsOostdam/go-code-visualizer/parser
-package name: parser
-imports:
-fmt
-types:
-variables:
-functions:
-func (p parsedCode) PackagePath() string
-func (p parsedCode) PackageName() string
-func (p parsedCode) Imports() []string
-func (p parsedCode) Types() []string
-func (p parsedCode) Variables() []string
-func (p parsedCode) Functions() []string
-func (p parsedCode) ToString() (str string)
-
-package path: github.com/ThijsOostdam/go-code-visualizer
-package name: main
-imports:
-types:
-variables:
-functions:
-
+}
