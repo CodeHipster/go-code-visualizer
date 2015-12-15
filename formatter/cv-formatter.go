@@ -2,7 +2,7 @@ package formatter
 
 import(
 	"github.com/thijsoostdam/go-code-visualizer/formatter/graph"
-	"fmt"
+	_ "fmt"
 	)
 
 func GenerateDotGraph(goCode []ParsedCode) string{
@@ -14,17 +14,6 @@ func GenerateDotGraph(goCode []ParsedCode) string{
 	graph := graph.NewGraph(settings, packageNodes, packageRelations)	
 	
 	return graph.BuildGraphString()	
-}
-
-func getMapOfPackageNames(goCode []ParsedCode) (packages map[string]string){
-	
-	packages = make(map[string]string)
-	
-	for _, code := range goCode{
-		packages[code.PackageName()] = code.PackagePath()
-	}	
-	
-	return packages
 }
 
 func getMapOfPackagePaths(goCode []ParsedCode) (packages map[string]string){
@@ -40,10 +29,27 @@ func getMapOfPackagePaths(goCode []ParsedCode) (packages map[string]string){
 
 func getPackageNodes(goCode []ParsedCode) (packageNodes []graph.PackageNode){
 	
-	packageNames := getMapOfPackageNames(goCode)
+	packagesMap := make(map[string]graph.PackageNode)
 	
-	for name, path := range packageNames {
-		packageNodes = append(packageNodes, graph.PackageNode{Name:name, Path:path, Files:nil})
+	//Map the files to their graph.PackageNode
+	for _, parsedCode := range goCode{		
+		packageNodeFile := graph.PackageNodeFile{
+			FileName: parsedCode.FileName(),
+			Functions: parsedCode.Functions(),
+			Types: parsedCode.Types(),
+			Variables: parsedCode.Variables()}
+		
+		node := packagesMap[parsedCode.PackageName()]
+		node.Name = parsedCode.PackageName()
+		node.Path = parsedCode.PackagePath()
+		node.Files = append(node.Files, packageNodeFile)
+		//maybe we should work with pointers?
+		packagesMap[parsedCode.PackageName()] = node
+	}
+	
+	//Take the graph.PackageNode out of the map.
+	for _, packageNode := range packagesMap{
+		packageNodes = append(packageNodes, packageNode)
 	}
 	
 	return packageNodes
@@ -53,12 +59,8 @@ func getPackageRelations(goCode []ParsedCode) (packageRelations []graph.PackageR
 	
 	packagePaths := getMapOfPackagePaths(goCode)
 	
-	fmt.Printf("package paths:\n%v\n",packagePaths)
-	
 	for _, file := range goCode{
-		fmt.Printf("file name: %s\n", file.PackageName())
 		for _, dependencyPath := range file.Imports(){
-			fmt.Printf("	dependency: %s\n",dependencyPath)
 			pkgname := packagePaths[dependencyPath]
 			if(pkgname != ""){
 				packageRelations = append(packageRelations, graph.PackageRelation{From: file.PackageName() , To: pkgname})

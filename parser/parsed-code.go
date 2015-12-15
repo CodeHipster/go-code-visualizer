@@ -3,12 +3,17 @@ package parser
 import "fmt"
 
 type parsedCode struct{
+	fileName string
     packagePath string
     packageName string
 	imports []string
 	types []string
 	variables []string
 	functions []string	
+}
+
+func (p parsedCode) FileName() string{
+	return p.fileName
 }
 
 func (p parsedCode) PackagePath() string{

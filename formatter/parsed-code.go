@@ -3,6 +3,7 @@ package formatter
 
 //Expects Imports to match PackagePath of other packages.
 type ParsedCode interface{
+	FileName() string
 	//PackagePath() expects all paths to be lowercase.
 	PackagePath() string
 	PackageName() string
