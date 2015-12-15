@@ -146,6 +146,7 @@ func ParseFile(path string) (parsedGoCode parsedCode){
 	
 	syntaxTree := goParseFile(path)
 		
+	parsedGoCode.fileName = filepath.Base(path)
     parsedGoCode.packagePath = strings.ToLower(distilPackagePath(path))
 	parsedGoCode.packageName = syntaxTree.Name.Name
 	

@@ -33,7 +33,7 @@ func (pnf PackageNodeFile) ToGraphString() map[string]string{
 	packageColumnForFileMap["variables"] = ""
 	
 	for i := 0 ; i < rows; i++{
-		packageColumnForFileMap["filename"] += fmt.Sprintf(rowStr,".")
+		packageColumnForFileMap["filename"] += fmt.Sprintf(rowStr,pnf.FileName)
 		if(i < len(pnf.Functions)){
 			packageColumnForFileMap["functions"] += fmt.Sprintf(rowStr, pnf.Functions[i])
 		}else{
