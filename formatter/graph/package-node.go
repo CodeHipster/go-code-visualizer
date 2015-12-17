@@ -5,58 +5,23 @@ import(
 )
 
 type PackageNode struct{
-	Name string
-	Path string
-	Files []PackageNodeFile
+	name string
+	path string
+	rows []PackageNodeRow
 }
 
-type PackageNodeFile struct {
-	FileName string
-	Functions []string
-	Types []string
-	Variables []string
+func CreatePackageNode(fileName string, packagePath string, rows []PackageNodeRow) PackageNode{
+	return PackageNode{
+		name : fileName,
+		path : packagePath,
+		rows : rows}
 }
 
-func (pnf PackageNodeFile) ToGraphString() map[string]string{
-	
-	packageColumnForFileMap := make(map[string]string)
-	rows := 1
-	if(len(pnf.Functions) > rows){ rows = len(pnf.Functions) }
-	if(len(pnf.Types) > rows){  rows = len(pnf.Types) }
-	if(len(pnf.Variables) > rows){ rows = len(pnf.Variables) }
-	
-	rowStr :=
-`					%s<BR></BR>
-`
-	packageColumnForFileMap["functions"] = ""
-	packageColumnForFileMap["types"] = ""
-	packageColumnForFileMap["variables"] = ""
-	
-	for i := 0 ; i < rows; i++{
-		packageColumnForFileMap["filename"] += fmt.Sprintf(rowStr,pnf.FileName)
-		if(i < len(pnf.Functions)){
-			packageColumnForFileMap["functions"] += fmt.Sprintf(rowStr, pnf.Functions[i])
-		}else{
-			packageColumnForFileMap["functions"] += fmt.Sprintf(rowStr,".")
-		}
-		
-		if(i < len(pnf.Types)){
-			packageColumnForFileMap["types"] += fmt.Sprintf(rowStr, pnf.Types[i])
-		}else{
-			packageColumnForFileMap["types"] += fmt.Sprintf(rowStr,".")
-		}
-		
-		if(i < len(pnf.Variables)){
-			packageColumnForFileMap["variables"] += fmt.Sprintf(rowStr, pnf.Variables[i])
-		}else{
-			packageColumnForFileMap["variables"] += fmt.Sprintf(rowStr,".")
-		}		
-	}
-	return packageColumnForFileMap
+func (pn *PackageNode) AddPackageNodeRow(row PackageNodeRow){
+	pn.rows = append(pn.rows, row)
 }
 
-//TODO: implement all the filenames, types, vars, funcs
-func (pn PackageNode) ToGraphString() string {
+func (pn PackageNode) toGraphString() string {
 	strNode := 
 `	"%s" [
 		label=<
@@ -96,16 +61,20 @@ func (pn PackageNode) ToGraphString() string {
 	strFuncColumn := ""
 	strTypeColumn := ""
 	strVarColumn := ""
-	for _,graphFile := range pn.Files{
-		mapFile := graphFile.ToGraphString()
-		strFilenameColumn += fmt.Sprintf(strColumn, mapFile["filename"])
-		strFuncColumn += fmt.Sprintf(strColumn, mapFile["functions"])
-		strTypeColumn += fmt.Sprintf(strColumn, mapFile["types"])
-		strVarColumn += fmt.Sprintf(strColumn, mapFile["variables"])
+	for _,row := range pn.rows{
+		strFilenameColumn += fmt.Sprintf(strColumn, row.fileNameCell())
+		strFuncColumn += fmt.Sprintf(strColumn, row.functionsCell())
+		strTypeColumn += fmt.Sprintf(strColumn, row.typesCell())
+		strVarColumn += fmt.Sprintf(strColumn, row.variablesCell())
 	}	
+	//remove the last piping symbol
+	strFilenameColumn = strFilenameColumn[:len(strFilenameColumn) - 8]
+	strFuncColumn = strFuncColumn[:len(strFuncColumn) - 8]
+	strTypeColumn = strTypeColumn[:len(strTypeColumn) - 8]
+	strVarColumn = strVarColumn[:len(strVarColumn) - 8]
 	
 	nodeBody := fmt.Sprintf(strBody, strFilenameColumn, strFuncColumn, strTypeColumn, strVarColumn)
 	
-	return fmt.Sprintf(strNode, pn.Name, pn.Name, pn.Path, nodeBody)
+	return fmt.Sprintf(strNode, pn.name, pn.name, pn.path, nodeBody)
 }
 
