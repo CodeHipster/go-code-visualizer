@@ -9,8 +9,21 @@ It will show the dependencies between packages and content of those packages
 - Public Functions
 
 ===
-How
+What does it do?
 ===
-Fase 1
-The go-code-visualizer will generate a cv file that can be visualized by a dot language visualizer.
 
+The go-code-visualizer will generate a gv(graphviz) file that can be visualized by a dot language visualizer.
+
+==
+How can i use it?
+==
+
+Build the go code into an executable.
+
+Run the executable in the folder of the project you want to visualize.
+
+It will put a .gv file in the same folder
+
+download a dot graph visualizer (e.g. http://www.graphviz.org/Download..php)
+
+pass the .gv file to the dot program. (e.g. > dot -Tsvgz dot-visual.gv -o go-code_dot.svgz)
