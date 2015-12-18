@@ -28,5 +28,4 @@ download a dot graph visualizer (e.g. http://www.graphviz.org/Download..php)
 
 pass the .gv file to the dot program. (e.g. > dot -Tsvgz dot-visual.gv -o go-code_dot.svgz)
 
-![GitHub Logo]()
 Format: ![graph_image](https://github.com/ThijsOostdam/go-code-visualizer/blob/master/example/go-code_dot.png)
