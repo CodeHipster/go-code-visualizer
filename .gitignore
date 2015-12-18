@@ -26,3 +26,5 @@ _testmain.go
 *.gv
 *.bat
 *.svgz
+
+!/example/*

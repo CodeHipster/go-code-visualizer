@@ -1,0 +1,210 @@
+digraph GoProject {
+	rankdir=TB
+		
+	node [
+		fontsize = 12
+		shape = "record"
+	]
+
+	"formatter" [
+		label=<
+		{	<B><FONT POINT-SIZE="12">formatter : github.com/thijsoostdam/go-code-visualizer/formatter</FONT></B> |
+			{
+				{
+					<B>FileName</B> |
+					cv-formatter.go<BR></BR>
+					|
+					parsed-code.go<BR></BR>
+				}
+				|
+				{
+					<B>Functions</B>|
+					func GenerateDotGraph(goCode []ParsedCode) string<BR></BR>
+					|
+					.<BR></BR>					
+				}
+				|
+				{
+					<B>Types</B> |
+					.<BR></BR>
+					|
+					type ParsedCode interface<BR></BR>										
+				}
+				|
+				{
+					<B>Variables</B>|
+					.<BR></BR>
+					|
+					.<BR></BR>					
+				}
+			}			
+		}>
+	]
+	"graph" [
+		label=<
+		{	<B><FONT POINT-SIZE="12">graph : github.com/thijsoostdam/go-code-visualizer/formatter/graph</FONT></B> |
+			{
+				{
+					<B>FileName</B> |
+					graph.go<BR></BR>
+					.<BR></BR>
+					|
+					node-setting.go<BR></BR>
+					|
+					package-node-row.go<BR></BR>
+					|
+					package-node.go<BR></BR>
+					.<BR></BR>
+					|
+					package-relation.go<BR></BR>
+				}
+				|
+				{
+					<B>Functions</B>|
+					func CreateGraph(settings []string, nodeSetting NodeSettings, packageNodes []PackageNode, packageRelations []PackageRelation) (graph Graph)<BR></BR>
+					func (g Graph)BuildGraphString() string <BR></BR>
+					|
+					func(ns NodeSettings)ToGraphString() string<BR></BR>
+					|
+					func CreatePackageNodeRow(fileName string, functions []string, types []string, variables []string) PackageNodeRow<BR></BR>
+					|
+					func CreatePackageNode(fileName string, packagePath string, rows []PackageNodeRow) PackageNode<BR></BR>
+					func (pn *PackageNode) AddPackageNodeRow(row PackageNodeRow)<BR></BR>
+					|
+					func (pr PackageRelation) ToGraphString() string <BR></BR>					
+				}
+				|
+				{
+					<B>Types</B> |
+					type Graph struct<BR></BR>
+					.<BR></BR>
+					|
+					type NodeSettings struct<BR></BR>
+					|
+					type PackageNodeRow struct<BR></BR>
+					|
+					type PackageNode struct<BR></BR>
+					.<BR></BR>
+					|
+					type PackageRelation struct<BR></BR>										
+				}
+				|
+				{
+					<B>Variables</B>|
+					.<BR></BR>
+					.<BR></BR>
+					|
+					.<BR></BR>
+					|
+					.<BR></BR>
+					|
+					.<BR></BR>
+					.<BR></BR>
+					|
+					.<BR></BR>					
+				}
+			}			
+		}>
+	]
+	"main" [
+		label=<
+		{	<B><FONT POINT-SIZE="12">main : github.com/thijsoostdam/go-code-visualizer</FONT></B> |
+			{
+				{
+					<B>FileName</B> |
+					go-code-visualizer.go<BR></BR>
+					|
+					test.go<BR></BR>
+				}
+				|
+				{
+					<B>Functions</B>|
+					.<BR></BR>
+					|
+					.<BR></BR>					
+				}
+				|
+				{
+					<B>Types</B> |
+					.<BR></BR>
+					|
+					.<BR></BR>										
+				}
+				|
+				{
+					<B>Variables</B>|
+					.<BR></BR>
+					|
+					.<BR></BR>					
+				}
+			}			
+		}>
+	]
+	"parser" [
+		label=<
+		{	<B><FONT POINT-SIZE="12">parser : github.com/thijsoostdam/go-code-visualizer/parser</FONT></B> |
+			{
+				{
+					<B>FileName</B> |
+					ast-scanner.go<BR></BR>
+					|
+					.<BR></BR>
+					.<BR></BR>
+					.<BR></BR>
+					parsed-code.go<BR></BR>
+					.<BR></BR>
+					.<BR></BR>
+					.<BR></BR>
+					.<BR></BR>
+				}
+				|
+				{
+					<B>Functions</B>|
+					func ParseFile(path string) (parsedGoCode parsedCode)<BR></BR>
+					|
+					func (p parsedCode) FileName() string<BR></BR>
+					func (p parsedCode) PackagePath() string<BR></BR>
+					func (p parsedCode) PackageName() string<BR></BR>
+					func (p parsedCode) Imports() []string<BR></BR>
+					func (p parsedCode) Types() []string<BR></BR>
+					func (p parsedCode) Variables() []string<BR></BR>
+					func (p parsedCode) Functions() []string<BR></BR>
+					func (p parsedCode) ToString() (str string)<BR></BR>					
+				}
+				|
+				{
+					<B>Types</B> |
+					.<BR></BR>
+					|
+					.<BR></BR>
+					.<BR></BR>
+					.<BR></BR>
+					.<BR></BR>
+					.<BR></BR>
+					.<BR></BR>
+					.<BR></BR>
+					.<BR></BR>										
+				}
+				|
+				{
+					<B>Variables</B>|
+					.<BR></BR>
+					|
+					.<BR></BR>
+					.<BR></BR>
+					.<BR></BR>
+					.<BR></BR>
+					.<BR></BR>
+					.<BR></BR>
+					.<BR></BR>
+					.<BR></BR>					
+				}
+			}			
+		}>
+	]
+
+	"formatter" -> "graph"
+	"main" -> "parser"
+	"main" -> "formatter"
+
+}
