@@ -1,4 +1,3 @@
-==================
 go-code-visualizer
 ==================
 
@@ -8,15 +7,13 @@ It will show the dependencies between packages and content of those packages
 - Public Variables
 - Public Functions
 
-===
 What does it do?
-===
+================
 
 The go-code-visualizer will generate a gv(graphviz) file that can be visualized by a dot language visualizer.
 
-==
 How can i use it?
-==
+=================
 
 Build the go code into an executable.
 
