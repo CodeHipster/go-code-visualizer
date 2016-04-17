@@ -160,9 +160,9 @@ func ParseFile(path string) (parsedGoCode parsedCode){
 					case token.TYPE:
 						parsedGoCode.addTypes(parseTypeDeclarations(genericDeclaration.Specs))	
 					case token.VAR:	
-						parsedGoCode.addVars(parseVariableDeclarations(genericDeclaration.Specs, "var"))											
+						parsedGoCode.addVars(parseVariableDeclarations(genericDeclaration.Specs, "var "))											
 					case token.CONST:
-						parsedGoCode.addVars(parseVariableDeclarations(genericDeclaration.Specs, "const"))
+						parsedGoCode.addVars(parseVariableDeclarations(genericDeclaration.Specs, "const "))
 					default:
 						fmt.Println("unknown generic declaration")
 				}
