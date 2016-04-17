@@ -1,7 +1,7 @@
 package formatter
 
 import(
-	"github.com/thijsoostdam/go-code-visualizer/formatter/graph"
+	"github.com/codehipster/go-code-visualizer/formatter/graph"
 	_ "fmt"
 	)
 

@@ -27,4 +27,7 @@ _testmain.go
 *.bat
 *.svgz
 
+TODO.MD
+
+#include everything from example
 !/example/*
