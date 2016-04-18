@@ -31,7 +31,7 @@ func (g Graph)BuildGraphString() string {
 %s
 %s
 }`
-	return fmt.Sprintf(graphString, g.settingsGraphString(), g.nodeSetting.ToGraphString(), g.packageNodesGraphString(), g.packageRelationsGraphString())
+	return fmt.Sprintf(graphString, g.settingsGraphString(), g.nodeSetting.ToGraphString(), g.packageNodesGraphString(), g.packageRelationsGraphString()) 
 }
 
 func (g Graph) settingsGraphString() string{

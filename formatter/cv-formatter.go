@@ -1,8 +1,8 @@
 package formatter
 
 import(
+	"html"
 	"github.com/codehipster/go-code-visualizer/formatter/graph"
-	_ "fmt"
 	)
 
 func GenerateDotGraph(goCode []ParsedCode) string{
@@ -17,6 +17,13 @@ func GenerateDotGraph(goCode []ParsedCode) string{
 	return graph.BuildGraphString()	
 }
 
+func htmlEscapeStringArray(arr []string) []string{
+	for i, str := range arr{
+		arr[i] = html.EscapeString(str)
+	}
+	return arr
+}
+
 func getPackageNodes(goCode []ParsedCode) (packageNodes []graph.PackageNode){
 	
 	packagesMap := make(map[string]*graph.PackageNode)
@@ -28,18 +35,18 @@ func getPackageNodes(goCode []ParsedCode) (packageNodes []graph.PackageNode){
 		nodePtr := packagesMap[parsedCode.PackageName()]
 		if (nodePtr == nil){
 			node := graph.CreatePackageNode(
-				parsedCode.PackageName(),
-				parsedCode.PackagePath(),
+				html.EscapeString(parsedCode.PackageName()),
+				html.EscapeString(parsedCode.PackagePath()),
 				nil)
 			nodePtr = &node
 		}
 		
 		//add row
 		nodePtr.AddPackageNodeRow(graph.CreatePackageNodeRow(
-			parsedCode.FileName(), 
-			parsedCode.Functions(),
-			parsedCode.Types(),
-			parsedCode.Variables()))
+			html.EscapeString(parsedCode.FileName()), 
+			htmlEscapeStringArray(parsedCode.Functions()),
+			htmlEscapeStringArray(parsedCode.Types()),
+			htmlEscapeStringArray(parsedCode.Variables())))
 		
 		//put back in map
 		packagesMap[parsedCode.PackageName()] = nodePtr
