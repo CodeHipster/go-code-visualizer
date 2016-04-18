@@ -29,5 +29,7 @@ _testmain.go
 
 TODO.MD
 
+/temp/*
+
 #include everything from example
 !/example/*

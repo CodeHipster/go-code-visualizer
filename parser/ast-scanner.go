@@ -87,9 +87,23 @@ func parseTypeDeclarations(typeSpecs []ast.Spec) []string{
 			case *ast.MapType:	
 			//todo: add key and element type?													
 				types = append(types, "type []" + typeSpec.Name.Name)	
-			case *ast.ChanType:
-			//todo: add channel direction?														
-				types = append(types, "type " + typeSpec.Name.Name + " chan")				
+			case *ast.ChanType:	
+			
+				channelType := (*ast.ChanType)(typeType)
+				receive := ""
+				send := ""
+								
+				if(channelType.Dir&ast.SEND != 0){
+					//channel can send.
+					send = "<-"
+				}
+				
+				if(channelType.Dir&ast.RECV != 0){
+					//channel can receive.
+					receive = "<-"
+				}
+				
+				types = append(types, "type " + typeSpec.Name.Name + " " + send + "chan" + receive)				
 			default:
 				fmt.Printf("unknown type: %s\n",reflect.TypeOf(typeSpec.Type))								
 		}								
@@ -105,17 +119,33 @@ func parseVariableDeclarations(variableSpecs []ast.Spec, prefix string) []string
 		varSpec := spec.(*ast.ValueSpec)
 		var varType string
 		switch typeVar := varSpec.Type.(type){ //check for nil?
+			//TODO: more types? like map,func etc?
 			case *ast.Ident:									
 				ident := (*ast.Ident)(typeVar)
 				varType = ident.Name
-			break;
+			case *ast.ChanType:			
+				channelType := (*ast.ChanType)(typeVar)
+				receive := ""
+				send := ""
+								
+				if(channelType.Dir&ast.SEND != 0){
+					//channel can send.
+					send = "<-"
+				}
+				
+				if(channelType.Dir&ast.RECV != 0){
+					//channel can receive.
+					receive = "<-"
+				}
+				
+				varType = send + "chan" + receive
 			default:
 				fmt.Printf("unknown varType: %s\n",reflect.TypeOf(varSpec.Type))
 		}
 		for _,name := range varSpec.Names{
 			if(ast.IsExported(name.Name)){
 				fmt.Printf("Variable exported: %s\n",name.Name)
-				variables = append(variables, prefix + name.Name + varType)
+				variables = append(variables, prefix + " " + name.Name + " " + varType)
 			}else{
 				fmt.Printf("Variable not exported: %s\n",name.Name)
 			}
@@ -128,7 +158,7 @@ func parseFunction(funcDecl *ast.FuncDecl, fileInBytes []byte) (string, bool){
 	if(ast.IsExported(funcDecl.Name.Name)){
 		fmt.Printf("Function exported: %s\n", funcDecl.Name.Name)
 		return string(fileInBytes[funcDecl.Pos()-1:funcDecl.Body.Lbrace-1]), true						
-	}else{		
+	}else{
 		fmt.Printf("Function not exported: %s\n", funcDecl.Name.Name)
 	}
 	return "", false
@@ -159,10 +189,10 @@ func ParseFile(path string) (parsedGoCode parsedCode){
 						parsedGoCode.addImports(parseImportDeclarations(genericDeclaration.Specs))
 					case token.TYPE:
 						parsedGoCode.addTypes(parseTypeDeclarations(genericDeclaration.Specs))	
-					case token.VAR:	
-						parsedGoCode.addVars(parseVariableDeclarations(genericDeclaration.Specs, "var "))											
+					case token.VAR:
+						parsedGoCode.addVars(parseVariableDeclarations(genericDeclaration.Specs, "var"))											
 					case token.CONST:
-						parsedGoCode.addVars(parseVariableDeclarations(genericDeclaration.Specs, "const "))
+						parsedGoCode.addVars(parseVariableDeclarations(genericDeclaration.Specs, "const"))
 					default:
 						fmt.Println("unknown generic declaration")
 				}

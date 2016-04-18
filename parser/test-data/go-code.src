@@ -1,0 +1,43 @@
+//test
+// import, functions, types, variables, constants, multiple and single declaration.
+package main
+
+//Unexported types
+type booltype bool
+type numericType uint8
+type stringType string
+type arrayType [5]uint8
+type sliceType []uint8
+type structType struct{}
+type pointerType *structType
+type functionType func(str string) (retstr string)
+type interfaceType interface{}
+type mapType map[string]uint8
+type channelType chan uint8
+
+//Exported types
+type Booltype bool
+type NumericType uint8
+type StringType string
+type ArrayType [5]uint8
+type SliceType []uint8
+type StructType struct{}
+type PointerType *structType
+type FunctionType func(str string) (retstr string)
+type InterfaceType interface{}
+type MapType map[string]uint8
+type ChannelType chan uint8
+
+//Unexported variables
+var test int
+var testChan chan<- int
+
+//exported variables
+var Test int
+var TestChan chan<- int
+
+//unexported functions
+
+
+//exported functions
+
