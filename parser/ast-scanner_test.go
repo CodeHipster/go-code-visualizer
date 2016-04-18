@@ -5,16 +5,18 @@ package parser
 import (
     "testing"
     "reflect"
+    "path/filepath"
     "github.com/davecgh/go-spew/spew")
 
 func TestParser(t *testing.T) {
-    parsedGoCode := ParseFile(".\\test-data\\go-code.src")
+    absolutePath,_ := filepath.Abs(".\\test-data\\go-code.src"); 
+    parsedGoCode := ParseFile(absolutePath)
     
     spew.Dump(parsedGoCode)
     
     expectedParsedGoCode := parsedCode{}
     expectedParsedGoCode.fileName = "go-code.src"
-    expectedParsedGoCode.packagePath = "t-data" //TODO: looks wrong :-/
+    expectedParsedGoCode.packagePath = "github.com/codehipster/go-code-visualizer/parser/test-data"
     expectedParsedGoCode.packageName = "main"
     //expectedParsedGoCode.imports
     expectedParsedGoCode.addVars([]string{
@@ -35,6 +37,8 @@ func TestParser(t *testing.T) {
         "type []MapType",
         "type ChannelType <-chan<-",
     })
+        
+    spew.Dump(expectedParsedGoCode)
         
     if(reflect.DeepEqual(parsedGoCode, expectedParsedGoCode) == false){
         t.Fail();
