@@ -15,11 +15,11 @@ The go-code-visualizer will generate a gv(graphviz) file that can be visualized 
 How can i use it?
 =================
 
-Build the go code into an executable.
+`go run go-code-visualizer.go <path>`
 
-Run the executable in the folder of the project you want to visualize.
+Alternatively, you can also build the go code into an executable and place it in the folder of the project you want to visualize.
 
-It will put a .gv file in the same folder
+Program will produce a .gv file in the analyzed folder
 
 Place the contents of the .gv file in this(http://mdaines.github.io/viz.js/) online visualizer.
 

@@ -35,13 +35,19 @@ func goParseFile(path string) (ast *ast.File){
 	return
 }
 
+/*
+   If package is located under src, return path relative to it. Keep path complete if not
+   TODO: src can be anything, not exclusive to GOPATH
+*/
+func distilPackagePath(path string) string {
+	directory := filepath.Dir(path)
+	srcIndex := strings.Index(directory, "src")
 
-//TODO: assuming the code resides in a src folder. is that always true?
-//TODO: what if index is -1?
-func distilPackagePath(path string) string {	
-    directory := filepath.Dir(path)
-    srcIndex := strings.Index(directory,"src")
-    return filepath.ToSlash(directory[srcIndex+4:])
+	if -1 != srcIndex {
+		return filepath.ToSlash(directory[srcIndex+4:])
+	}
+
+	return filepath.ToSlash(directory)
 }
 
 func parseImportDeclarations(importSpecs []ast.Spec) []string{
